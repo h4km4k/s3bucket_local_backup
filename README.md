@@ -11,7 +11,7 @@ The script also handles backup retention, you can change values in `s3backup.sh`
 
 #### To get the mail notification working follow these steps:
 
-Change line 37+39 to your recipient.
+❗ Change line 37+39 to your recipient.
 
 Install mailutils:
 
