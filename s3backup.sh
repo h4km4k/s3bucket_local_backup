@@ -34,8 +34,8 @@ do
 
 	# Benachrichtigung verschicken (per Email)
 	if [ "$syncvar" -eq 1 ] && [ "$copyvar" -eq 1 ] && [ "$delvar" -eq 1 ]; then
-	   echo "S3Bucket $line Backup successful!" #| mail -s "S3Bucket $line Backup successful!" "to@address"
+	   echo "S3Bucket $line Backup successful!" | mail -s "S3Bucket $line Backup successful!" "to@address"
 	else
-           echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar"  #| mail -s "FAILURE backing up S3Bucket $line!" "to@address"
+           echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar"  | mail -s "FAILURE backing up S3Bucket $line!" "to@address"
 	fi
 done
