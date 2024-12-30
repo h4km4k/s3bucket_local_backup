@@ -1,4 +1,4 @@
-# s3bucket_backup
+# s3bucket_local_backup
 Repository to Backup s3 Bucket to local folder and notify per email (success/failure).
 
 Fillin the bucket name(s) into `buckets.txt`
