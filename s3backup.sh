@@ -1,14 +1,17 @@
 #!/bin/bash
 
-# variablen auf Fehler setzen
-syncvar=0
-copyvar=0
-delvar=0
+#Mailempfänger setzen
+recipient=empfaenger@test.com
 
 # Ordner älter als die letzten in die variable schreiben
 olderthan=13
 # Für Tage 1, Für Wochen 7, für Monate 30
 retention=7
+
+# variablen auf Fehler setzen
+syncvar=0
+copyvar=0
+delvar=0
 
 for line in $(cat buckets.txt)
 do
@@ -34,8 +37,8 @@ do
 
 	# Benachrichtigung verschicken (per Email)
 	if [ "$syncvar" -eq 1 ] && [ "$copyvar" -eq 1 ] && [ "$delvar" -eq 1 ]; then
-	   echo "S3Bucket $line Backup successful!" | mail -s "S3Bucket $line Backup successful!" "to@address"
+	   echo "S3Bucket $line Backup successful!" | mail -s "S3Bucket $line Backup successful!" $recipient
 	else
-           echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar"  | mail -s "FAILURE backing up S3Bucket $line!" "to@address"
+           echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar"  | mail -s "FAILURE backing up S3Bucket $line!" $recipient
 	fi
 done
