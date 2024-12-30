@@ -42,17 +42,15 @@ Install and configure sstmp:
     sudo apt-get install ssmtp
     sudo nano /etc/ssmtp/ssmtp.conf
     
- Add the following to the file:
-    
-    FromLineOverride=YES
+Add the following to the file:
+
+
     root=user@gmail.com
-    rewriteDomain=gmail.com
-    hostname=gmail.com
-    realname="Sendername"
     AuthUser=user@gmail.com
-    AuthPass=password
+    AuthPass=PASSWORD
     mailhub=smtp.gmail.com:587
     UseSTARTTLS=YES
+
 
 Add mail adress to the user:
 
@@ -62,7 +60,15 @@ If you use the root user as example:
 
     root:user@gmail.com:smtp.gmail.com:587
 
+Set the FROM name (optional):
+
+    nano /etc/passwd
+
+If you use the root user as example (after that the email is FROM: TEST):
+
+    root:x:0:0:TEST:/root:/bin/bash
+
 
 To test:
 
-    echo "This is a test" | mail -s "Test" <user>@<email>.com
+    echo "This is a test" | mail -s "Test" recipient@gmail.com
