@@ -45,7 +45,11 @@ Install and configure sstmp:
  Add the following to the file:
     
     FromLineOverride=YES
-    AuthUser=<user>@gmail.com
+    root=user@gmail.com
+    rewriteDomain=gmail.com
+    hostname=gmail.com
+    realname="Sendername"
+    AuthUser=user@gmail.com
     AuthPass=password
     mailhub=smtp.gmail.com:587
     UseSTARTTLS=YES
