@@ -39,6 +39,6 @@ do
 	if [ "$syncvar" -eq 1 ] && [ "$copyvar" -eq 1 ] && [ "$delvar" -eq 1 ]; then
 	   echo "S3Bucket $line Backup successful!" | mail -s "S3Bucket $line Backup successful!" $recipient
 	else
-           echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar"  | mail -s "FAILURE backing up S3Bucket $line!" $recipient
+           (echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar")  | mail -s "FAILURE backing up S3Bucket $line!" $recipient
 	fi
 done
