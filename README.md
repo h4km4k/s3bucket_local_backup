@@ -27,7 +27,7 @@ Latest direct from Amazon [(recommended):](https://docs.aws.amazon.com/cli/lates
 
 #### To get the mail notification working follow these steps:
 
-❗ Change line 37+39 in s3backup.sh to your recipient.
+❗ Change line "4" in s3backup.sh to your recipient.
 
 
 
