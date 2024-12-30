@@ -9,9 +9,27 @@ The script also handles backup retention, you can change values in `s3backup.sh`
 ***
 
 
+#### First of all install `awscli` package:
+
+From Debian repository:
+
+    sudo apt-get install awscli
+
+Latest direct from Amazon [(recommended):](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    sudo ./aws/install
+
+
+***
+
+
 #### To get the mail notification working follow these steps:
 
 ❗ Change line 37+39 in s3backup.sh to your recipient.
+
+
 
 Install mailutils:
 
