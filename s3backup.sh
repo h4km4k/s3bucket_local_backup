@@ -30,7 +30,7 @@ do
 	# Ordner zählen
 	foldercount=$(find ./$line* -maxdepth 0 -type d | wc -l)
 
-	# wenn #foldercount# über #olderthan#  dann ordner löschen die älter als #olderthan# Wochen sind
+	# wenn #foldercount# über #olderthan#  dann ordner löschen die älter als #olderthan#*#retention sind
 	if [ "$foldercount" -gt "$olderthan" ]; then
 	   find ./$line\_* -type d -mtime +$(($olderthan*$retention)) -exec rm -rf {} \; 2>/dev/null  && delvar=1 || delvar=0
 	fi
