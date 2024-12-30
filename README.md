@@ -54,6 +54,15 @@ Install and configure sstmp:
     mailhub=smtp.gmail.com:587
     UseSTARTTLS=YES
 
+Add mail adress to the user:
+
+    nano /etc/ssmtp/revaliases
+
+If you use the root user as example:
+
+    root:user@gmail.com:smtp.gmail.com:587
+
+
 To test:
 
     echo "This is a test" | mail -s "Test" <user>@<email>.com
