@@ -1,44 +1,65 @@
 #!/bin/bash
 
+#Enable Syslog logging
+exec 2> >(logger -s -t $(basename $0))          #nur fehler loggen
+#exec 1> >(logger -s -t $(basename $0)) 2>&1    #alles loggen
+
 #Mailempfänger setzen
 recipient=empfaenger@test.com
 
-# Ordner älter als die letzten in die variable schreiben
-olderthan=13
-# Für Tage 1, Für Wochen 7, für Monate 30
-retention=7
+#Backuppfad
+backuppath=/mnt/cifs
 
-# variablen auf Fehler setzen
-syncvar=0
-copyvar=0
-delvar=0
+# Ordner älter als die letzten in die variable schreiben
+olderthan=14
+# Für Tage 1, Für Wochen 7, für Monate 30
+retention=1
 
 for line in $(cat buckets.txt)
 do
-	# Verzeichnis erstellen falls noch nicht vorhanden
-	mkdir -p ./$line
+        # variablen auf Fehler setzen
+        cdvar=0
+        syncvar=0
+        copyvar=0
+        delvar=0
 
-	# S3 Bucket in den lokalen Bucketname-Ordner syncen
-	aws s3 sync --delete s3://$line ./$line && syncvar=1 || syncvar=0
+        #Check ob cifs gemaounted ist und in das Backupverzeichnis wechseln
+        if [ -f /mnt/cifs/.mounted ]; then
+                cd $backuppath && cdvar=1 || cdvar=0
+        fi
 
-	# Datumsveriable erstellen/aktuallisieren
-	timestamp=$(date +"%d-%m-%Y_%H-%M-%S")
+        # S3 Bucket in den lokalen Bucketname-Ordner syncen
+        if [ "$cdvar" -eq 1 ]; then
+                aws s3 sync --delete s3://$line ./$line && syncvar=1 || syncvar=0
+        fi
 
-	# Ordner kopieren und mit Datum versehen
-	cp -r ./$line ./$line\_$timestamp && copyvar=1 || copyvar=0
+        # Datumsveriable erstellen/aktuallisieren
+        timestamp=$(date +"%d-%m-%Y_%H-%M-%S")
 
-	# Ordner zählen
-	foldercount=$(find ./$line* -maxdepth 0 -type d | wc -l)
+        # Ordner kopieren und mit Datum versehen
+#       cp -r $backuppath/$line $backuppath/$line\_$timestamp && copyvar=1 || copyvar=0
+        # Ordner komprimieren statt ihn nur zu kopieren
+        if [ "$syncvar" -eq 1 ]; then
+                mkdir -p $line\_BACKUPS
+                tar -czf ./$line\_BACKUPS/$line\_$timestamp.tar.gz ./$line && copyvar=1 || copyvar=0
+        fi
 
-	# wenn #foldercount# über #olderthan#  dann ordner löschen die älter als #olderthan#*#retention sind
-	if [ "$foldercount" -gt "$olderthan" ]; then
-	   find ./$line\_* -type d -mtime +$(($olderthan*$retention)) -exec rm -rf {} \; 2>/dev/null  && delvar=1 || delvar=0
-	fi
+        # Ordner zählen
+        filecount=$(find ./$line\_BACKUPS/$line* -maxdepth 0 -type f | wc -l)
 
-	# Benachrichtigung verschicken (per Email)
-	if [ "$syncvar" -eq 1 ] && [ "$copyvar" -eq 1 ] && [ "$delvar" -eq 1 ]; then
-	   echo "S3Bucket $line Backup successful!" | mail -s "S3Bucket $line Backup successful!" $recipient
-	else
-           (echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $copyvar")  | mail -s "FAILURE backing up S3Bucket $line!" $recipient
-	fi
+        # wenn #filecount# über #olderthan#  dann ordner löschen die älter als #olderthan#*#retention sind
+        if [ "$copyvar" -eq 1 ]; then
+                if [ "$filecount" -gt "$olderthan" ]; then
+                        find ./$line\_BACKUPS/$line\_* -type f -mtime +$(($olderthan*$retention)) -exec rm {} \; 2>/dev/null  && delvar=1 || delvar=0
+                else
+                        delvar=1
+                fi
+        fi
+
+        # Benachrichtigung verschicken (per Email)
+        if [ "$syncvar" -eq 1 ] && [ "$copyvar" -eq 1 ] && [ "$delvar" -eq 1 ]; then
+           echo "S3Bucket \"$line\" Backup successful!" | mail -s "S3Bucket \"$line\" Backup successful!" $recipient
+        else
+           (echo "1=successful / 0=fault"; echo "Change Dir command successful: $cdvar"; echo "Sync command successful: $syncvar"; echo "Copy command successful: $copyvar"; echo "Delete command successful: $delvar") | mail -s "FAILURE backing up S3Bucket \"$line\"!" $recipient
+        fi
 done
