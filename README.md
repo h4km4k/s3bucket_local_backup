@@ -3,8 +3,9 @@ Repository to Backup s3 Bucket(s) to local folder and notify per email (success/
 
 Fillin the bucket name(s) into `buckets.txt`
 
-The script also handles backup retention, you can change values in `s3backup.sh`
+The script also handles backup retention, you can change values in `s3backup.sh` (line 14+16)
 
+❗ Change line "8+11" in s3backup.sh to your needs. And run `touch /YOUR_BACKUPPATH/.mounted` to make the mount check work.
 
 ***
 
@@ -26,8 +27,6 @@ Or latest direct from Amazon [(recommended):](https://docs.aws.amazon.com/cli/la
 
 
 #### To get the mail notification working follow these steps:
-
-❗ Change line "4" in s3backup.sh to your recipient.
 
 
 
